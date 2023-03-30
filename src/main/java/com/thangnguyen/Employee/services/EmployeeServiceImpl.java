@@ -1,5 +1,8 @@
 package com.thangnguyen.Employee.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +31,26 @@ public class EmployeeServiceImpl implements EmployeeService{
         employeeRepository.save(employeeEntity);
         //Save it to the repository
         return employee;
+    }
+
+    @Override
+    public List<Employee> getAllEmployees() {
+        List<EmployeeEntity> employeeEntities = employeeRepository.findAll();
+
+        List<Employee> employees = employeeEntities.stream().map(emp -> new Employee(
+            emp.getId(),
+            emp.getFirstName(),
+            emp.getLastName(), 
+            emp.getEmailId()))
+            .collect(Collectors.toList());
+        return employees;
+    }
+
+    @Override
+    public boolean deleteEmployee(Long id) {
+        EmployeeEntity employee = employeeRepository.findById(id).get();
+        employeeRepository.delete(employee);
+
+        return true;
     }
 }
